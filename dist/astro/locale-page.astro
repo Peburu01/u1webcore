@@ -1,0 +1,18 @@
+---
+// Renders one static page of the site under a locale prefix (/es/about) with that locale's catalogs.
+// u1webcore injects it for every non-source locale; the page source itself is not changed.
+import { localeRoutes } from 'virtual:u1webcore/i18n';
+
+export const prerender = true;
+export function getStaticPaths() {
+  return localeRoutes();
+}
+
+// Vite bundles every page, so the one this route stands for is picked by its file path.
+const pages = import.meta.glob('/src/pages/**/*.astro');
+const load = pages[Astro.props.file];
+// A Response can't be returned from a prerendered page, so a missing page is an error.
+if (!load) throw new Error(`u1webcore: no page ${Astro.props.file} to localize`);
+const Page = (await load()).default;
+---
+<Page />
