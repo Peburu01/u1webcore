@@ -45,6 +45,6 @@
     "typescript": "^7.0.2"
   },
   "bin": {
-    "u1webcore": "./dist/cli.mjs"
+    "u1webcore": "dist/cli.mjs"
   }
 }
