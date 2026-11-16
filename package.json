@@ -1,7 +1,44 @@
 {
   "name": "u1webcore",
-  "version": "0.2.0",
-  "description": "SEO, AEO/GEO, meta, Open Graph, JSON-LD, robots/sitemaps/llms.txt, redirects, tags and consent for websites. Pure core + Astro integration.",
+  "version": "0.2.1",
+  "description": "Astro SEO integration: meta tags, Open Graph images, JSON-LD schema, sitemaps, robots.txt, llms.txt (AEO/GEO for AI search), redirects, consent banner and an SEO audit CLI.",
+  "keywords": [
+    "astro",
+    "astro-integration",
+    "withastro",
+    "seo",
+    "astro-seo",
+    "meta-tags",
+    "open-graph",
+    "og-image",
+    "json-ld",
+    "schema-org",
+    "structured-data",
+    "sitemap",
+    "robots-txt",
+    "llms-txt",
+    "aeo",
+    "geo",
+    "ai-search",
+    "generative-engine-optimization",
+    "redirects",
+    "cookie-consent",
+    "gdpr",
+    "seo-audit",
+    "rss"
+  ],
+  "homepage": "https://github.com/Peburu01/u1webcore#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Peburu01/u1webcore.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Peburu01/u1webcore/issues"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
   "type": "module",
   "sideEffects": false,
   "exports": {
