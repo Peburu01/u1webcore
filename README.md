@@ -25,6 +25,17 @@ Add it once and every page gets correct, complete SEO without hand-written `<hea
 npm install u1webcore
 ```
 
+## Documentation
+
+- [Getting started](https://github.com/Peburu01/u1webcore/blob/main/docs/getting-started.md)
+- [Site settings](https://github.com/Peburu01/u1webcore/blob/main/docs/site-settings.md) · [Page settings](https://github.com/Peburu01/u1webcore/blob/main/docs/page-settings.md)
+- [Structured data (JSON-LD)](https://github.com/Peburu01/u1webcore/blob/main/docs/structured-data.md)
+- [AI search: llms.txt, Markdown pages, AI crawlers](https://github.com/Peburu01/u1webcore/blob/main/docs/ai-search.md)
+- [Sitemaps, robots.txt, feeds and other crawl files](https://github.com/Peburu01/u1webcore/blob/main/docs/crawl-files.md)
+- [Share images](https://github.com/Peburu01/u1webcore/blob/main/docs/share-images.md) · [Tags and consent](https://github.com/Peburu01/u1webcore/blob/main/docs/tags-and-consent.md)
+- [Redirects and headers](https://github.com/Peburu01/u1webcore/blob/main/docs/redirects-and-headers.md) · [Multilingual](https://github.com/Peburu01/u1webcore/blob/main/docs/multilingual.md)
+- [SEO audit CLI](https://github.com/Peburu01/u1webcore/blob/main/docs/audit.md) · [Core API](https://github.com/Peburu01/u1webcore/blob/main/docs/core-api.md) · [Troubleshooting](https://github.com/Peburu01/u1webcore/blob/main/docs/troubleshooting.md)
+
 ## Usage
 
 ```js
