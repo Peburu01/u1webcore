@@ -1,6 +1,6 @@
 {
   "name": "u1webcore",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "SEO, AEO/GEO, meta, Open Graph, JSON-LD, robots/sitemaps/llms.txt, redirects, tags and consent for websites. Pure core + Astro integration.",
   "type": "module",
   "sideEffects": false,

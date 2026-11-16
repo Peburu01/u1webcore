@@ -23,6 +23,8 @@ export * from './edge/headers';
 export * from './crawl/index';
 export * from './consent/tags';
 export * from './consent/consent';
+export * from './announce/types';
+export * from './announce/client';
 export * from './checker/pixels';
 export * from './checker/checks';
 export * from './aeo/score';

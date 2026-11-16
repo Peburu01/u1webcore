@@ -6,7 +6,7 @@ import { renderPage } from '../shared/page';
 import { SITE_FILE, clip, entryKey, pageSettings, routeFor, scriptJson } from '../shared/util';
 import { lastmodFor } from './lastmod';
 
-type Ctx = { url: URL; request: Request; routePattern?: string };
+type Ctx = { url: URL; request: Request; routePattern?: string; isPrerendered?: boolean };
 
 // Same process as the integration (dev, static build): live settings. Otherwise the bundled snapshot.
 const current = (): U1webcoreData => ((globalThis as Record<symbol, { data?: () => U1webcoreData } | undefined>)[Symbol.for('u1webcore.live')]?.data?.() ?? (data as U1webcoreData));
@@ -23,7 +23,7 @@ export const onRequest = async (ctx: Ctx, next: () => Promise<Response>): Promis
   const page = pageSettings(d.pages, route, path);
   let out: string;
   try {
-    const r = renderPage({ site: d.site, page, path, html, siteUrl: d.config.siteUrl, lastmod: lastmodFor(d.config.lastmod, path), tags: d.config.tags });
+    const r = renderPage({ site: d.site, page, path, html, siteUrl: d.config.siteUrl, lastmod: lastmodFor(d.config.lastmod, path), tags: d.config.tags, announce: !ctx.isPrerendered && ctx.request.headers.get('x-u1webcore') ? null : d.config.announce });
     out = r.html;
     if (d.config.editor && route && !ctx.request.headers.get('x-u1webcore')) {
       // Page facts for the CMS editor: it computes everything else from the settings it edits.

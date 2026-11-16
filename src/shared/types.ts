@@ -241,6 +241,8 @@ export type SiteSettings = {
   /** dataLayer events for clicks, form submits and views. Runs for every page, before any tag. */
   tagManager?: { triggers?: TagTrigger[] };
   consent?: ConsentSettings;
+  /** Announcements from the uni1 dashboard (strip, popup, toast). On when the site has a site key; false turns them off. */
+  announcements?: { enabled?: boolean };
   legal?: { privacy?: string; terms?: string; cookies?: string; imprint?: string };
   hints?: { preconnect?: string[]; dnsPrefetch?: string[] };
   /** Site-wide custom JSON-LD nodes, added to every page's graph. */

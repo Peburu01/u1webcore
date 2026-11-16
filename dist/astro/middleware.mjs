@@ -2168,7 +2168,7 @@ const DEFAULT_TEXT = {
 	preferences: "Preferences",
 	policy: "Privacy policy"
 };
-const js$2 = (v) => JSON.stringify(v).replace(/</g, "\\u003c");
+const js$3 = (v) => JSON.stringify(v).replace(/</g, "\\u003c");
 /** Runs before any tag: Consent Mode defaults, then the stored choice re-applied synchronously. */
 function consentHead(site) {
 	const c = site.consent ?? {};
@@ -2184,15 +2184,15 @@ function consentHead(site) {
 		security_storage: "granted"
 	};
 	const granted = Object.fromEntries(Object.keys(denied).map((k) => [k, "granted"]));
-	const defaults = c.regions?.length ? `gtag('consent','default',${js$2(granted)});gtag('consent','default',${js$2({
+	const defaults = c.regions?.length ? `gtag('consent','default',${js$3(granted)});gtag('consent','default',${js$3({
 		...denied,
 		region: c.regions,
 		wait_for_update: 500
-	})});` : `gtag('consent','default',${js$2({
+	})});` : `gtag('consent','default',${js$3({
 		...denied,
 		wait_for_update: 500
 	})});`;
-	return `<script>(function(){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}window.gtag=window.gtag||gtag;${google ? `${defaults}gtag('set','ads_data_redaction',true);gtag('set','url_passthrough',true);` : ""}try{var s=JSON.parse(localStorage.getItem(${js$2(CONSENT_KEY)})||'null');if(s&&s.v===${js$2(version)}&&s.exp>Date.now()){window.__u1consent=s.c;${google ? `gtag('consent','update',{analytics_storage:s.c.analytics?'granted':'denied',ad_storage:s.c.marketing?'granted':'denied',ad_user_data:s.c.marketing?'granted':'denied',ad_personalization:s.c.marketing?'granted':'denied',functionality_storage:s.c.preferences?'granted':'denied',personalization_storage:s.c.preferences?'granted':'denied'});` : ""}}}catch(e){}})();<\/script>\n`;
+	return `<script>(function(){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}window.gtag=window.gtag||gtag;${google ? `${defaults}gtag('set','ads_data_redaction',true);gtag('set','url_passthrough',true);` : ""}try{var s=JSON.parse(localStorage.getItem(${js$3(CONSENT_KEY)})||'null');if(s&&s.v===${js$3(version)}&&s.exp>Date.now()){window.__u1consent=s.c;${google ? `gtag('consent','update',{analytics_storage:s.c.analytics?'granted':'denied',ad_storage:s.c.marketing?'granted':'denied',ad_user_data:s.c.marketing?'granted':'denied',ad_personalization:s.c.marketing?'granted':'denied',functionality_storage:s.c.preferences?'granted':'denied',personalization_storage:s.c.preferences?'granted':'denied'});` : ""}}}catch(e){}})();<\/script>\n`;
 }
 /** Banner, dialog and the activator for held-back scripts. */
 function consentBody(site) {
@@ -2218,7 +2218,7 @@ function consentBody(site) {
 		cats: categories,
 		t: Object.fromEntries(Object.entries(text).map(([k, v]) => [k, escapeHtml(String(v))]))
 	};
-	return `<script>${RUNTIME$1.replace("__CFG__", js$2(cfg))}<\/script>\n`;
+	return `<script>${RUNTIME$1.replace("__CFG__", js$3(cfg))}<\/script>\n`;
 }
 const RUNTIME$1 = `(function(){var C=__CFG__,d=document,w=window;
 function load(){try{var s=JSON.parse(localStorage.getItem(C.key)||'null');if(s&&s.v===C.v&&s.exp>Date.now())return s.c}catch(e){}return null}
@@ -2237,12 +2237,12 @@ w.u1consent={get:load,open:function(){show(true)},set:function(c){c.__explicit=t
 d.addEventListener('click',function(e){var t=e.target.closest&&e.target.closest('[data-u1-consent-open],a[href="#cookie-settings"]');if(t){e.preventDefault();show(true)}});
 var s=load();if(s){activate(s)}else{if(gpc()){var g=all(false);activate(g)}show(false)}})();`;
 // src/consent/triggers.ts
-const js$1 = (v) => JSON.stringify(v).replace(/</g, "\\u003c");
+const js$2 = (v) => JSON.stringify(v).replace(/</g, "\\u003c");
 /** Page variables, pushed before the tag manager so its first tags already see them. */
 function dataLayerHead(page) {
 	const entries = Object.entries(page?.dataLayer ?? {});
 	if (!entries.length) return "";
-	return `<script>window.dataLayer=window.dataLayer||[];window.dataLayer.push(${js$1(Object.fromEntries(entries))});<\/script>\n`;
+	return `<script>window.dataLayer=window.dataLayer||[];window.dataLayer.push(${js$2(Object.fromEntries(entries))});<\/script>\n`;
 }
 /** Runtime for the site's triggers. Empty when there are none. */
 function triggersBody(site) {
@@ -2258,7 +2258,7 @@ function triggersBody(site) {
 		selector: t.selector,
 		params: t.params ?? {}
 	}));
-	return `<script>${RUNTIME.replace("__TRIGGERS__", js$1(cfg))}<\/script>\n`;
+	return `<script>${RUNTIME.replace("__TRIGGERS__", js$2(cfg))}<\/script>\n`;
 }
 const RUNTIME = `(function(){var T=__TRIGGERS__;window.dataLayer=window.dataLayer||[];
 function push(t,extra){var o={event:t.name};for(var k in t.params)o[k]=t.params[k];if(extra)for(var j in extra)o[j]=extra[j];window.dataLayer.push(o)}
@@ -2362,22 +2362,22 @@ const TAG_PRESETS = [
 	}
 ];
 const tagPreset = (kind) => TAG_PRESETS.find((p) => p.kind === kind);
-const js = (s) => JSON.stringify(s).replace(/</g, "\\u003c");
+const js$1 = (s) => JSON.stringify(s).replace(/</g, "\\u003c");
 function snippet(t) {
 	const v = (t.value ?? "").trim();
 	switch (t.kind) {
 		case "gtm": {
 			const host = t.serverUrl?.trim().replace(/\/+$/, "") || "https://www.googletagmanager.com";
 			return {
-				head: `<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=${js(`${host}/gtm.js?id=`)}+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer',${js(v)});<\/script>`,
+				head: `<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=${js$1(`${host}/gtm.js?id=`)}+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer',${js$1(v)});<\/script>`,
 				bodyStart: `<noscript><iframe src="${escapeHtml(host)}/ns.html?id=${encodeURIComponent(v)}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>`
 			};
 		}
-		case "ga4": return { head: `<script async src="https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(v)}"><\/script>\n<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config',${js(v)});<\/script>` };
-		case "meta": return { head: `<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init',${js(v)});fbq('track','PageView');<\/script>` };
-		case "linkedin": return { bodyEnd: `<script>window._linkedin_partner_id=${js(v)};window._linkedin_data_partner_ids=window._linkedin_data_partner_ids||[];window._linkedin_data_partner_ids.push(window._linkedin_partner_id);(function(l){if(!l){window.lintrk=function(a,b){window.lintrk.q.push([a,b])};window.lintrk.q=[]}var s=document.getElementsByTagName("script")[0];var b=document.createElement("script");b.type="text/javascript";b.async=true;b.src="https://snap.licdn.com/li.lms-analytics/insight.min.js";s.parentNode.insertBefore(b,s);})(window.lintrk);<\/script>` };
-		case "tiktok": return { head: `<script>!function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"];ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e};ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{};ttq._i[e]=[];ttq._i[e]._u=r;ttq._t=ttq._t||{};ttq._t[e]=+new Date;ttq._o=ttq._o||{};ttq._o[e]=n||{};var o=d.createElement("script");o.type="text/javascript";o.async=!0;o.src=r+"?sdkid="+e+"&lib="+t;var a=d.getElementsByTagName("script")[0];a.parentNode.insertBefore(o,a)};ttq.load(${js(v)});ttq.page();}(window,document,'ttq');<\/script>` };
-		case "clarity": return { head: `<script>(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script",${js(v)});<\/script>` };
+		case "ga4": return { head: `<script async src="https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(v)}"><\/script>\n<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config',${js$1(v)});<\/script>` };
+		case "meta": return { head: `<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init',${js$1(v)});fbq('track','PageView');<\/script>` };
+		case "linkedin": return { bodyEnd: `<script>window._linkedin_partner_id=${js$1(v)};window._linkedin_data_partner_ids=window._linkedin_data_partner_ids||[];window._linkedin_data_partner_ids.push(window._linkedin_partner_id);(function(l){if(!l){window.lintrk=function(a,b){window.lintrk.q.push([a,b])};window.lintrk.q=[]}var s=document.getElementsByTagName("script")[0];var b=document.createElement("script");b.type="text/javascript";b.async=true;b.src="https://snap.licdn.com/li.lms-analytics/insight.min.js";s.parentNode.insertBefore(b,s);})(window.lintrk);<\/script>` };
+		case "tiktok": return { head: `<script>!function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"];ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e};ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{};ttq._i[e]=[];ttq._i[e]._u=r;ttq._t=ttq._t||{};ttq._t[e]=+new Date;ttq._o=ttq._o||{};ttq._o[e]=n||{};var o=d.createElement("script");o.type="text/javascript";o.async=!0;o.src=r+"?sdkid="+e+"&lib="+t;var a=d.getElementsByTagName("script")[0];a.parentNode.insertBefore(o,a)};ttq.load(${js$1(v)});ttq.page();}(window,document,'ttq');<\/script>` };
+		case "clarity": return { head: `<script>(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script",${js$1(v)});<\/script>` };
 		case "hotjar": return { head: `<script>(function(h,o,t,j,a,r){h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};h._hjSettings={hjid:${Number(v) || 0},hjsv:6};a=o.getElementsByTagName('head')[0];r=o.createElement('script');r.async=1;r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;a.appendChild(r);})(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');<\/script>` };
 		case "plausible": return t.src ? { head: `<script async src="${escapeHtml(t.src)}"><\/script>\n<script>window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init();<\/script>` } : { head: `<script defer data-domain="${escapeHtml(v)}" src="https://plausible.io/js/script.js"><\/script>` };
 		case "fathom": return { head: `<script src="${escapeHtml(t.src || "https://cdn.usefathom.com/script.js")}" data-site="${escapeHtml(v)}" defer><\/script>` };
@@ -2436,6 +2436,344 @@ function renderTags(site, ctx = {}) {
 		bodyEnd: out.bodyEnd + triggersBody(site) + (consentOn ? consentBody(site) : "")
 	};
 }
+// src/announce/client.ts
+function announceClient(cfg) {
+	const w = window;
+	const d = document;
+	if (w.__u1a && !cfg.preview) return;
+	w.__u1a = 1;
+	if (!cfg.preview && w.self !== w.top) return;
+	const NS = "u1a:";
+	const now = Date.now();
+	const get = (k) => {
+		try {
+			return JSON.parse(localStorage.getItem(NS + k) || "null");
+		} catch (e) {
+			return null;
+		}
+	};
+	const put = (k, v) => {
+		try {
+			localStorage.setItem(NS + k, JSON.stringify(v));
+		} catch (e) {}
+	};
+	const sessGet = (k) => {
+		try {
+			return sessionStorage.getItem(NS + k);
+		} catch (e) {
+			return null;
+		}
+	};
+	const sessSet = (k) => {
+		try {
+			sessionStorage.setItem(NS + k, "1");
+		} catch (e) {}
+	};
+	const lang = (cfg.lang || d.documentElement.lang || "").toLowerCase().split("-")[0];
+	const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({
+		"&": "&amp;",
+		"<": "&lt;",
+		">": "&gt;",
+		"\"": "&quot;",
+		"'": "&#39;"
+	})[c]);
+	const safeUrl = (u) => /^(https?:|mailto:|tel:|\/|#|\.)/i.test(u || "") ? u : "#";
+	const rich = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_m, t, u) => `<a href="${esc(safeUrl(u))}">${t}</a>`).replace(/\n/g, "<br>");
+	const text = (a, k) => {
+		const t = (a.translations || {})[lang] || {};
+		if (t[k]) return t[k];
+		return k === "ctaLabel" ? a.cta ? a.cta.label : "" : a[k] || "";
+	};
+	const glob = (p) => new RegExp(`^${p.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*")}/?$`);
+	const path = location.pathname;
+	const bare = lang && path.indexOf(`/${lang}/`) === 0 ? path.slice(lang.length + 1) : path === `/${lang}` ? "/" : path;
+	const onPage = (a) => {
+		const p = a.pages || {
+			mode: "all",
+			paths: []
+		};
+		if (p.mode === "all") return true;
+		const hit = (p.paths || []).some((x) => {
+			const r = glob(x.trim());
+			return r.test(path) || r.test(bare);
+		});
+		return p.mode === "only" ? hit : !hit;
+	};
+	const live = (a) => (!a.startsAt || Date.parse(a.startsAt) <= now) && (!a.endsAt || Date.parse(a.endsAt) > now);
+	const rec = (a) => {
+		const r = get(a.id);
+		return r && r.v === a.version ? r : { v: a.version };
+	};
+	const due = (a) => {
+		const r = rec(a);
+		const f = a.frequency || { mode: "until-closed" };
+		if (f.mode === "always") return true;
+		if (f.mode === "session") return !sessGet(a.id);
+		if (f.mode === "once") return !r.seen;
+		if (f.mode === "days") return !r.seen || now - r.seen > (f.days || 1) * 864e5;
+		return !r.closed;
+	};
+	const mark = (a, field) => {
+		if (cfg.preview) return;
+		const r = rec(a);
+		r[field] = Date.now();
+		put(a.id, r);
+		if (field === "seen") sessSet(a.id);
+	};
+	const track = (a, type) => {
+		if (cfg.preview) return;
+		(w.dataLayer = w.dataLayer || []).push({
+			event: `u1_announcement_${type}`,
+			announcement_id: a.id,
+			announcement_name: a.name,
+			announcement_kind: a.kind
+		});
+		if (cfg.api && cfg.key) fetch(`${cfg.api}/public/v1/announcements/${a.id}/events`, {
+			method: "POST",
+			keepalive: true,
+			headers: {
+				"content-type": "application/json",
+				"x-site-key": cfg.key
+			},
+			body: JSON.stringify({ type })
+		}).catch(() => {});
+	};
+	const TONES = {
+		brand: ["var(--u1a-accent, #4f46e5)", "#fff"],
+		dark: ["#111827", "#f9fafb"],
+		light: ["#ffffff", "#111827"]
+	};
+	const colors = (a) => {
+		const ap = a.appearance || {};
+		const t = ap.tone === "custom" ? [ap.background || "#111827", ap.color || "#ffffff"] : TONES[ap.tone] || TONES.brand;
+		const accent = ap.accent || (ap.tone === "brand" ? t[1] : "var(--u1a-accent, #4f46e5)");
+		const accentFg = ap.accent || ap.tone !== "brand" ? "#fff" : t[0];
+		return `--bg:var(--u1a-bg, ${t[0]});--fg:var(--u1a-fg, ${t[1]});--ac:${accent};--acfg:${accentFg};`;
+	};
+	const CSS = `:host{all:initial;font-family:var(--u1a-font,inherit)}*{box-sizing:border-box}
+.w{font-family:inherit;color:var(--fg);-webkit-font-smoothing:antialiased;line-height:1.45}
+a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.x{appearance:none;border:0;background:transparent;color:inherit;opacity:.75;cursor:pointer;width:32px;height:32px;border-radius:8px;display:grid;place-items:center;flex:none;padding:0}
+.x:hover{opacity:1;background:color-mix(in srgb,currentColor 12%,transparent)}.x:focus-visible,.b:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+.x svg{width:16px;height:16px}
+.b{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:0;cursor:pointer;font:inherit;font-weight:600;text-decoration:none;background:var(--ac);color:var(--acfg);border-radius:calc(var(--u1a-radius,12px) - 4px);padding:10px 16px;font-size:14px;white-space:nowrap}
+.b:hover{filter:brightness(1.08)}
+.bar{background:var(--bg);overflow:hidden;max-height:0;transition:max-height .35s ease}
+.bar.in{max-height:240px}
+.bar .r{display:flex;align-items:center;justify-content:center;gap:12px;padding:9px 12px 9px 16px;font-size:14px;min-height:44px;max-width:1200px;margin:0 auto}
+.bar .t{flex:1;text-align:center}.bar .t strong:first-child{margin-right:6px}
+.bar .b{padding:6px 12px;font-size:13px}
+.ov{position:fixed;inset:0;z-index:2147483000;background:rgba(10,10,15,.55);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;transition:opacity .2s ease}
+.ov.bottom{align-items:flex-end}
+.ov.in{opacity:1}
+.card{background:var(--bg);border-radius:var(--u1a-radius,16px);box-shadow:0 24px 64px rgba(0,0,0,.28);width:100%;max-width:440px;max-height:calc(100vh - 32px);overflow:auto;position:relative;transform:translateY(12px) scale(.98);transition:transform .25s ease}
+.in .card,.toast.in{transform:none}
+.card .img{display:block;width:100%;max-height:220px;object-fit:cover;border-radius:var(--u1a-radius,16px) var(--u1a-radius,16px) 0 0}
+.card .p{padding:22px 22px 20px}.card h2{margin:0 0 6px;font-size:20px;line-height:1.25;font-weight:700}
+.card .t{margin:0;font-size:15px;opacity:.85}.card .a{margin-top:18px;display:flex;gap:8px}.card .a .b{flex:1}
+.card>.x{position:absolute;top:8px;right:8px;background:color-mix(in srgb,var(--bg) 70%,transparent)}
+.toast{position:fixed;z-index:2147482990;bottom:16px;right:16px;width:min(360px,calc(100vw - 32px));background:var(--bg);border-radius:var(--u1a-radius,14px);box-shadow:0 12px 40px rgba(0,0,0,.22);display:flex;gap:12px;padding:14px 10px 14px 16px;opacity:0;transform:translateY(16px);transition:opacity .25s ease,transform .25s ease}
+.toast.left{right:auto;left:16px}.toast.in{opacity:1}
+.toast h2{margin:0 0 2px;font-size:15px;font-weight:700}.toast .t{margin:0;font-size:14px;opacity:.85}.toast .b{margin-top:10px;padding:7px 12px;font-size:13px}
+.toast .img{width:56px;height:56px;border-radius:10px;object-fit:cover;flex:none}
+@media (max-width:520px){.ov{align-items:flex-end;padding:0}.card{max-width:none;border-radius:var(--u1a-radius,16px) var(--u1a-radius,16px) 0 0}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}`;
+	const X = "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\"><path d=\"M6 6l12 12M18 6L6 18\"/></svg>";
+	const shell = (a) => {
+		const host = d.createElement("div");
+		host.setAttribute("data-u1-announcement", a.kind);
+		const root = host.attachShadow ? host.attachShadow({ mode: "open" }) : host;
+		root.innerHTML = `<style>${CSS}</style><div class="w" style="${colors(a)}"></div>`;
+		return {
+			host,
+			box: root.querySelector(".w")
+		};
+	};
+	const cta = (a) => a.cta && a.cta.url ? `<a class="b" data-cta href="${esc(safeUrl(a.cta.url))}"${a.cta.newTab ? " target=\"_blank\" rel=\"noopener\"" : ""}>${esc(text(a, "ctaLabel"))}</a>` : "";
+	const wire = (a, el, close) => {
+		const c = el.querySelector("[data-cta]");
+		if (c) c.addEventListener("click", () => {
+			track(a, "click");
+			if (a.kind !== "bar") {
+				mark(a, "closed");
+				close();
+			}
+		});
+		el.querySelectorAll("[data-x]").forEach((x) => x.addEventListener("click", () => {
+			track(a, "close");
+			mark(a, "closed");
+			close();
+		}));
+	};
+	const shown = (a) => {
+		mark(a, "seen");
+		track(a, "view");
+	};
+	function bar(a) {
+		const { host, box } = shell(a);
+		const ap = a.appearance || {};
+		const title = text(a, "title");
+		box.innerHTML = `<div class="bar" role="region" aria-label="${esc(title || "Announcement")}"><div class="r"><div class="t">${title ? `<strong>${esc(title)}</strong>` : ""}${rich(text(a, "body"))}</div>${cta(a)}${ap.dismissible !== false ? `<button class="x" data-x aria-label="Close">${X}</button>` : ""}</div></div>`;
+		const slot = d.querySelector("[data-u1-announcements]");
+		if (slot) slot.appendChild(host);
+		else d.body.insertBefore(host, d.body.firstChild);
+		const el = box.firstChild;
+		const html = d.documentElement;
+		const size = () => html.style.setProperty("--u1a-bar-height", `${el.offsetHeight}px`);
+		const ro = w.ResizeObserver ? new w.ResizeObserver(size) : null;
+		if (ro) ro.observe(el);
+		requestAnimationFrame(() => {
+			el.classList.add("in");
+			size();
+		});
+		wire(a, el, () => {
+			el.classList.remove("in");
+			html.style.setProperty("--u1a-bar-height", "0px");
+			if (ro) ro.disconnect();
+			setTimeout(() => host.remove(), 400);
+		});
+		shown(a);
+	}
+	let open = false;
+	function popup(a) {
+		if (open) return;
+		open = true;
+		const { host, box } = shell(a);
+		const pos = (a.appearance || {}).position === "bottom" ? " bottom" : "";
+		const title = text(a, "title");
+		box.innerHTML = `<div class="ov${pos}"><div class="card" role="dialog" aria-modal="true" aria-label="${esc(title || "Announcement")}" tabindex="-1">${a.image ? `<img class="img" src="${esc(safeUrl(a.image))}" alt="">` : ""}<button class="x" data-x aria-label="Close">${X}</button><div class="p">${title ? `<h2>${esc(title)}</h2>` : ""}<p class="t">${rich(text(a, "body"))}</p>${a.cta && a.cta.url ? `<div class="a">${cta(a)}</div>` : ""}</div></div></div>`;
+		d.body.appendChild(host);
+		const ov = box.firstChild;
+		const card = ov.firstChild;
+		const before = d.activeElement;
+		const overflow = d.documentElement.style.overflow;
+		d.documentElement.style.overflow = "hidden";
+		const focusable = () => Array.prototype.slice.call(card.querySelectorAll("a[href],button"));
+		const close = () => {
+			ov.classList.remove("in");
+			d.removeEventListener("keydown", key, true);
+			d.documentElement.style.overflow = overflow;
+			setTimeout(() => host.remove(), 250);
+			if (before && before.focus) before.focus();
+			open = false;
+		};
+		const key = (e) => {
+			if (e.key === "Escape") {
+				track(a, "close");
+				mark(a, "closed");
+				close();
+			} else if (e.key === "Tab") {
+				const f = focusable();
+				if (!f.length) return;
+				const active = (host.shadowRoot || d).activeElement;
+				const first = f[0];
+				const last = f[f.length - 1];
+				if (e.shiftKey && (active === first || active === card)) {
+					e.preventDefault();
+					last.focus();
+				} else if (!e.shiftKey && active === last) {
+					e.preventDefault();
+					first.focus();
+				}
+			}
+		};
+		d.addEventListener("keydown", key, true);
+		ov.addEventListener("click", (e) => {
+			if (e.target === ov) {
+				track(a, "close");
+				mark(a, "closed");
+				close();
+			}
+		});
+		wire(a, card, close);
+		requestAnimationFrame(() => {
+			ov.classList.add("in");
+			const f = focusable();
+			(f.length > 1 ? f[1] : card).focus({ preventScroll: true });
+		});
+		shown(a);
+	}
+	function toast(a) {
+		const { host, box } = shell(a);
+		const ap = a.appearance || {};
+		const title = text(a, "title");
+		box.innerHTML = `<div class="toast${ap.position === "bottom-left" ? " left" : ""}" role="status">${a.image ? `<img class="img" src="${esc(safeUrl(a.image))}" alt="">` : ""}<div style="flex:1;min-width:0">${title ? `<h2>${esc(title)}</h2>` : ""}<p class="t">${rich(text(a, "body"))}</p>${cta(a)}</div>${ap.dismissible !== false ? `<button class="x" data-x aria-label="Close">${X}</button>` : ""}</div>`;
+		d.body.appendChild(host);
+		const el = box.firstChild;
+		requestAnimationFrame(() => el.classList.add("in"));
+		wire(a, el, () => {
+			el.classList.remove("in");
+			setTimeout(() => host.remove(), 300);
+		});
+		shown(a);
+	}
+	const SHOW = {
+		bar,
+		popup,
+		toast
+	};
+	function arm(a) {
+		const show = () => SHOW[a.kind] && SHOW[a.kind](a);
+		const t = a.trigger || { on: "load" };
+		if (cfg.preview || t.on === "load" || a.kind === "bar") return show();
+		if (t.on === "delay") return void setTimeout(show, Math.max(0, t.seconds || 0) * 1e3);
+		if (t.on === "scroll") {
+			const at = Math.min(100, Math.max(0, t.percent == null ? 50 : t.percent)) / 100;
+			const check = () => {
+				const max = d.documentElement.scrollHeight - innerHeight;
+				if (max <= 0 || scrollY / max >= at) {
+					removeEventListener("scroll", check);
+					show();
+				}
+			};
+			addEventListener("scroll", check, { passive: true });
+			return check();
+		}
+		if (t.on === "exit") {
+			const leave = (e) => {
+				if (e.clientY <= 0 && !e.relatedTarget) {
+					d.removeEventListener("mouseout", leave);
+					show();
+				}
+			};
+			d.addEventListener("mouseout", leave);
+		}
+	}
+	let ran = false;
+	function run(items) {
+		if (ran) return;
+		ran = true;
+		const pick = (items || []).filter((a) => cfg.preview || live(a) && onPage(a) && due(a));
+		const seen = {};
+		pick.forEach((a) => {
+			if (seen[a.kind]) return;
+			seen[a.kind] = 1;
+			arm(a);
+		});
+	}
+	const start = (fn) => d.readyState === "loading" ? d.addEventListener("DOMContentLoaded", fn) : fn();
+	if (cfg.items) return start(() => run(cfg.items));
+	if (!cfg.api || !cfg.key) return;
+	const cached = get("cache");
+	if (cached && now - cached.at < 864e5) start(() => run(cached.items));
+	fetch(`${cfg.api}/public/v1/announcements`, { headers: { "x-site-key": cfg.key } }).then((r) => r.ok ? r.json() : null).then((j) => {
+		if (!j) return;
+		put("cache", {
+			at: Date.now(),
+			items: j.items
+		});
+		if (!cached) start(() => run(j.items));
+	}).catch(() => {});
+}
+const js = (v) => JSON.stringify(v).replace(/</g, "\\u003c");
+/** The <script> that shows the site's announcements. Empty without an API origin and site key. */
+function announceBody(cfg) {
+	if (!cfg || (!cfg.api || !cfg.key) && !cfg.items) return "";
+	return `<script>(${announceClient.toString()})(${js({
+		...cfg,
+		api: cfg.api?.replace(/\/+$/, "")
+	})});<\/script>\n`;
+}
 // src/shared/page.ts
 function pageHead(site, page, resolved, text) {
 	const graph = buildGraph({
@@ -2456,7 +2794,7 @@ function pageHead(site, page, resolved, text) {
 		graph
 	};
 }
-function renderPage({ site, page = {}, path, html, siteUrl, lastmod, tags = true }) {
+function renderPage({ site, page = {}, path, html, siteUrl, lastmod, tags = true, announce }) {
 	const detected = detect(html);
 	const resolved = resolvePage({
 		site,
@@ -2472,11 +2810,13 @@ function renderPage({ site, page = {}, path, html, siteUrl, lastmod, tags = true
 		path: resolved.path,
 		page
 	}) : {};
+	const notes = site.announcements?.enabled === false ? "" : announceBody(announce);
 	return {
 		html: inject(html, {
 			head,
 			lang: resolved.lang,
-			...t
+			...t,
+			bodyEnd: (t.bodyEnd ?? "") + notes
 		}),
 		head,
 		resolved,
@@ -2511,7 +2851,8 @@ const onRequest = async (ctx, next) => {
 			html,
 			siteUrl: d.config.siteUrl,
 			lastmod: lastmodFor(d.config.lastmod, path),
-			tags: d.config.tags
+			tags: d.config.tags,
+			announce: !ctx.isPrerendered && ctx.request.headers.get("x-u1webcore") ? null : d.config.announce
 		});
 		out = r.html;
 		if (d.config.editor && route && !ctx.request.headers.get("x-u1webcore")) {

@@ -36064,6 +36064,7 @@ function u1webcore(options = {}) {
 	let logger;
 	/** Locales from Astro's final `i18n` config (set by the site or an i18n integration such as wuchale). */
 	let astroLanguages;
+	let announce = null;
 	/** The settings files, with the locales Astro routes by when the site settings name none. */
 	const settingsOf = (files) => {
 		const { site: own, pages } = readSettings(root, files);
@@ -36094,7 +36095,8 @@ function u1webcore(options = {}) {
 				dev,
 				tags: !dev || !!options.tagsInDev,
 				editor: dev && options.editor !== false,
-				lastmod
+				lastmod,
+				announce
 			}
 		};
 	};
@@ -36132,6 +36134,8 @@ function u1webcore(options = {}) {
 				cached = null;
 				globalThis[LIVE] = { data };
 				const site = readSettings(root, []).site;
+				announce = await announceFrom(options, command === "dev" ? "development" : "production", root);
+				if (announce) l.info(`announcements on (${announce.api})`);
 				if (site.redirects?.length) {
 					const { rules, issues } = checkRedirects(site.redirects);
 					for (const i of issues) l.warn(`redirect ${i.from}: ${i.message}`);
@@ -36399,5 +36403,26 @@ async function readBuilt(outDir, pathname) {
 		return await readFile(path.join(outDir, c), "utf-8");
 	} catch {}
 	return null;
+}
+/** The API origin and site key for announcements: the options, else the site's env (PUBLIC_UNI1_API_URL / _SITE_KEY). */
+async function announceFrom(options, mode, root) {
+	if (options.announcements === false) return null;
+	let env = { ...process.env };
+	try {
+		const { loadEnv } = await import(
+			/* @vite-ignore */
+			"vite"
+);
+		env = {
+			...loadEnv(mode, root, "PUBLIC_"),
+			...env
+		};
+	} catch {}
+	const api = (options.announcements?.api ?? env.PUBLIC_UNI1_API_URL ?? "").replace(/\/+$/, "");
+	const key = options.announcements?.siteKey ?? env.PUBLIC_UNI1_SITE_KEY ?? "";
+	return api && key ? {
+		api,
+		key
+	} : null;
 }
 export { LIVE, u1webcore as default, readSettings };
