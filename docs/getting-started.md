@@ -104,7 +104,7 @@ u1webcore({
   files: true,          // write robots.txt, sitemaps, llms.txt… at build
   tagsInDev: false,     // load third-party tags and the consent banner in astro dev too
   editor: true,         // embed page facts for the U1CMS visual editor in dev
-  announcements: false, // or { api, siteKey }: banners from the uni1 dashboard
+  announcements: false, // or { api, siteKey }: banners edited in the CMS (megaphone in the top bar)
 });
 ```
 
@@ -113,7 +113,7 @@ u1webcore({
 | `files` | `true` | Write robots.txt, sitemaps, llms.txt, Markdown pages and the rest at build. Set `false` if you generate them yourself. |
 | `tagsInDev` | `false` | Tags and the consent banner are off in dev so your own visits aren't tracked. |
 | `editor` | `true` | Dev only: lets the U1CMS editor show each page's SEO facts. Harmless without it. |
-| `announcements` | from env | Site announcements (strip, popup, toast) from the uni1 dashboard. Reads `PUBLIC_UNI1_API_URL` and `PUBLIC_UNI1_SITE_KEY`; pass `{ api, siteKey }` or `false`. |
+| `announcements` | from env | Site announcements (strip, popup, toast), edited in the CMS editor (megaphone button). Reads `PUBLIC_UNI1_API_URL` and `PUBLIC_UNI1_SITE_KEY`; pass `{ api, siteKey }` or `false`. |
 
 ## Check your site
 
