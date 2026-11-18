@@ -30,6 +30,8 @@ export type Announcement = {
     position?: 'bottom-right' | 'bottom-left' | 'center' | 'bottom';
     /** Show a close button (popups always have one). */
     dismissible: boolean;
+    /** link: the button as text with an arrow (quieter, for strips). */
+    ctaStyle?: 'button' | 'link';
   };
   trigger: { on: 'load' | 'delay' | 'scroll' | 'exit'; seconds?: number; percent?: number };
   /** Paths may use * (e.g. /blog/*). Language prefixes (/fr/…) are ignored when matching. */
