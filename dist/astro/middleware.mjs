@@ -2560,8 +2560,11 @@ a{color:inherit;text-decoration:underline;text-underline-offset:2px}
 .b:hover{filter:brightness(1.08)}
 .bar{background:var(--bg);overflow:hidden;max-height:0;transition:max-height .35s ease}
 .bar.in{max-height:240px}
-.bar .r{display:flex;align-items:center;justify-content:center;gap:12px;padding:9px 12px 9px 16px;font-size:14px;min-height:44px;max-width:1200px;margin:0 auto}
-.bar .t{flex:1;text-align:center}.bar .t strong:first-child{margin-right:6px}
+.bar .r{display:flex;align-items:center;gap:12px;padding:9px 12px 9px 16px;font-size:14px;min-height:44px;max-width:var(--u1a-bar-width,1200px);margin:0 auto}
+.bar .t{flex:1;min-width:0;display:flex;align-items:center;gap:10px}.bar .t>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pill{flex:none;display:inline-flex;align-items:center;border:1px solid color-mix(in srgb,currentColor 25%,transparent);background:color-mix(in srgb,currentColor 14%,transparent);border-radius:6px;padding:3px 8px;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.lk{flex:none;display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:12px;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;white-space:nowrap}.lk:hover{opacity:.8}.lk svg{width:14px;height:14px}
+@media (max-width:640px){.bar .lk .l{display:none}}
 .bar .b{padding:6px 12px;font-size:13px}
 .ov{position:fixed;inset:0;z-index:2147483000;background:rgba(10,10,15,.55);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;transition:opacity .2s ease}
 .ov.bottom{align-items:flex-end}
@@ -2589,7 +2592,13 @@ a{color:inherit;text-decoration:underline;text-underline-offset:2px}
 			box: root.querySelector(".w")
 		};
 	};
-	const cta = (a) => a.cta && a.cta.url ? `<a class="b" data-cta href="${esc(safeUrl(a.cta.url))}"${a.cta.newTab ? " target=\"_blank\" rel=\"noopener\"" : ""}>${esc(text(a, "ctaLabel"))}</a>` : "";
+	const ARROW = "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14M13 6l6 6-6 6\"/></svg>";
+	const cta = (a) => {
+		if (!a.cta || !a.cta.url) return "";
+		const label = esc(text(a, "ctaLabel"));
+		const attrs = `data-cta href="${esc(safeUrl(a.cta.url))}"${a.cta.newTab ? " target=\"_blank\" rel=\"noopener\"" : ""}`;
+		return (a.appearance || {}).ctaStyle === "link" ? `<a class="lk" ${attrs} aria-label="${label}"><span class="l">${label}</span>${ARROW}</a>` : `<a class="b" ${attrs}>${label}</a>`;
+	};
 	const wire = (a, el, close) => {
 		const c = el.querySelector("[data-cta]");
 		if (c) c.addEventListener("click", () => {
@@ -2613,7 +2622,7 @@ a{color:inherit;text-decoration:underline;text-underline-offset:2px}
 		const { host, box } = shell(a);
 		const ap = a.appearance || {};
 		const title = text(a, "title");
-		box.innerHTML = `<div class="bar" role="region" aria-label="${esc(title || "Announcement")}"><div class="r"><div class="t">${title ? `<strong>${esc(title)}</strong>` : ""}${rich(text(a, "body"))}</div>${cta(a)}${ap.dismissible !== false ? `<button class="x" data-x aria-label="Close">${X}</button>` : ""}</div></div>`;
+		box.innerHTML = `<div class="bar" role="region" aria-label="${esc(title || "Announcement")}"><div class="r"><div class="t">${title ? `<span class="pill">${esc(title)}</span>` : ""}<span>${rich(text(a, "body"))}</span></div>${cta(a)}${ap.dismissible !== false ? `<button class="x" data-x aria-label="Close">${X}</button>` : ""}</div></div>`;
 		const slot = d.querySelector("[data-u1-announcements]");
 		if (slot) slot.appendChild(host);
 		else d.body.insertBefore(host, d.body.firstChild);
@@ -2752,23 +2761,12 @@ a{color:inherit;text-decoration:underline;text-underline-offset:2px}
 		});
 	}
 	const start = (fn) => d.readyState === "loading" ? d.addEventListener("DOMContentLoaded", fn) : fn();
-	if (cfg.items) return start(() => run(cfg.items));
-	if (!cfg.api || !cfg.key) return;
-	const cached = get("cache");
-	if (cached && now - cached.at < 864e5) start(() => run(cached.items));
-	fetch(`${cfg.api}/public/v1/announcements`, { headers: { "x-site-key": cfg.key } }).then((r) => r.ok ? r.json() : null).then((j) => {
-		if (!j) return;
-		put("cache", {
-			at: Date.now(),
-			items: j.items
-		});
-		if (!cached) start(() => run(j.items));
-	}).catch(() => {});
+	if (cfg.items?.length) start(() => run(cfg.items));
 }
 const js = (v) => JSON.stringify(v).replace(/</g, "\\u003c");
-/** The <script> that shows the site's announcements. Empty without an API origin and site key. */
+/** The <script> that shows the site's announcements. Empty when none is on. */
 function announceBody(cfg) {
-	if (!cfg || (!cfg.api || !cfg.key) && !cfg.items) return "";
+	if (!cfg?.items?.length) return "";
 	return `<script>(${announceClient.toString()})(${js({
 		...cfg,
 		api: cfg.api?.replace(/\/+$/, "")
@@ -2810,7 +2808,7 @@ function renderPage({ site, page = {}, path, html, siteUrl, lastmod, tags = true
 		path: resolved.path,
 		page
 	}) : {};
-	const notes = site.announcements?.enabled === false ? "" : announceBody(announce);
+	const notes = announceBody(announce);
 	return {
 		html: inject(html, {
 			head,

@@ -1,5 +1,5 @@
-// Announcements: a strip above the page, a popup or a corner toast, managed in the uni1 dashboard and fetched
-// live with the site key, so they change without a rebuild. This is the shape the public API returns.
+// Announcements: a strip, a popup or a corner toast. The site keeps them in src/site.u1wc.json (`announcements`), the
+// CMS edits that file like any other, and u1webcore puts the ones that are on into each page at build.
 
 export type AnnouncementKind = 'bar' | 'popup' | 'toast';
 export type AnnouncementTone = 'brand' | 'dark' | 'light' | 'custom';
@@ -45,13 +45,50 @@ export type Announcement = {
   endsAt: string | null;
 };
 
+/** One announcement as the site stores it (src/site.u1wc.json → announcements[]). */
+export type SiteAnnouncement = {
+  id: string;
+  name: string;
+  kind: AnnouncementKind;
+  status: 'on' | 'off';
+  /** Bumped when what visitors see changes, so people who closed it see it again. */
+  version?: number;
+  content: { title?: string; body?: string; cta?: Announcement['cta']; image?: string | null };
+  translations?: Record<string, AnnouncementText>;
+  appearance: Announcement['appearance'];
+  trigger: Announcement['trigger'];
+  pages: { mode: Announcement['pages']['mode']; paths?: string[] };
+  frequency: Announcement['frequency'];
+  startsAt?: string | null;
+  endsAt?: string | null;
+};
+
+/** The shape the page script shows. */
+export const toAnnouncement = (a: SiteAnnouncement): Announcement => ({
+  id: a.id,
+  version: a.version ?? 1,
+  name: a.name,
+  kind: a.kind,
+  title: a.content.title ?? '',
+  body: a.content.body ?? '',
+  cta: a.content.cta ?? null,
+  image: a.content.image ?? null,
+  translations: a.translations ?? {},
+  appearance: a.appearance,
+  trigger: a.trigger,
+  pages: { mode: a.pages.mode, paths: a.pages.paths ?? [] },
+  frequency: a.frequency,
+  startsAt: a.startsAt ?? null,
+  endsAt: a.endsAt ?? null,
+});
+
 export type AnnounceConfig = {
-  /** The uni1 API origin, e.g. https://api.example.com */
+  /** Optional: the uni1 API origin and site key, only to count views, clicks and closes. */
   api?: string;
-  /** The property's site key. */
   key?: string;
-  /** Show these instead of fetching, right away and ignoring dates and how often (the dashboard's preview). */
+  /** The announcements that are on, from the site's settings. */
   items?: Announcement[];
+  /** Show them right away, ignoring dates and how often (the CMS preview). */
   preview?: boolean;
   lang?: string;
 };

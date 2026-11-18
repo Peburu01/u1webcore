@@ -7,6 +7,7 @@
 //   - dev: GET /_u1webcore/audit crawls the running site and returns the whole-site audit (for the dashboard)
 // Settings are JSON in the site: src/site.u1wc.json (site-wide) and a <page>.u1wc.json next to each page file
 // (src/pages/contact.astro → src/pages/contact.u1wc.json), exposed to the middleware as a virtual module.
+import { toAnnouncement, type AnnounceConfig } from '../announce/types';
 import { execFile } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
@@ -32,8 +33,8 @@ export type U1webcoreOptions = {
   /** Write robots.txt, sitemaps, llms.txt… at build (default true). */
   files?: boolean;
   /**
-   * Announcements from the uni1 dashboard. By default the API origin and site key come from the env
-   * (PUBLIC_UNI1_API_URL, PUBLIC_UNI1_SITE_KEY); pass them here instead, or false to turn announcements off.
+   * Announcements come from src/site.u1wc.json (`announcements`). false turns them off. The API origin and site key
+   * (else PUBLIC_UNI1_API_URL / PUBLIC_UNI1_SITE_KEY) are optional: only to count views, clicks and closes.
    */
   announcements?: false | { api?: string; siteKey?: string };
 };
@@ -49,8 +50,8 @@ export type U1webcoreData = {
     dev: boolean;
     tags: boolean;
     editor: boolean;
-    /** Where the announcements come from; null = off. */
-    announce: { api: string; key: string } | null;
+    /** The announcements that are on, and where to count them; null = none. */
+    announce: AnnounceConfig | null;
     lastmod: { re: string; at: string }[];
   };
 };
@@ -134,7 +135,7 @@ export default function u1webcore(options: U1webcoreOptions = {}) {
   let logger: Logger;
   /** Locales from Astro's final `i18n` config (set by the site or an i18n integration such as wuchale). */
   let astroLanguages: Languages | undefined;
-  let announce: U1webcoreData['config']['announce'] = null;
+  let stats: { api: string; key: string } | null = null;
 
   /** The settings files, with the locales Astro routes by when the site settings name none. */
   const settingsOf = (files: PageRoute[]) => {
@@ -148,6 +149,8 @@ export default function u1webcore(options: U1webcoreOptions = {}) {
     if (cached && !dev) return cached;
     const files = fileRoutes();
     const { site, pages } = settingsOf(files);
+    const on = options.announcements === false ? [] : (site.announcements ?? []).filter((a) => a.status === 'on').map(toAnnouncement);
+    const announce = on.length ? { items: on, ...(stats && { api: stats.api, key: stats.key }) } : null;
     return (cached = {
       site,
       pages,
@@ -189,8 +192,7 @@ export default function u1webcore(options: U1webcoreOptions = {}) {
         cached = null;
         (globalThis as Record<symbol, unknown>)[LIVE] = { data };
         const site = readSettings(root, []).site;
-        announce = await announceFrom(options, command === 'dev' ? 'development' : 'production', root);
-        if (announce) l.info(`announcements on (${announce.api})`);
+        stats = await announceFrom(options, command === 'dev' ? 'development' : 'production', root);
         if (site.redirects?.length) {
           const { rules, issues } = checkRedirects(site.redirects);
           for (const i of issues) l.warn(`redirect ${i.from}: ${i.message}`);

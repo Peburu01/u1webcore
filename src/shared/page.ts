@@ -44,6 +44,6 @@ export function renderPage({ site, page = {}, path, html, siteUrl, lastmod, tags
   const analysis = analyze(html);
   const { head, graph } = pageHead(site, page, resolved, analysis.text);
   const t: { bodyEnd?: string } = tags ? renderTags(site, { path: resolved.path, page }) : {};
-  const notes = site.announcements?.enabled === false ? '' : announceBody(announce);
+  const notes = announceBody(announce);
   return { html: inject(html, { head, lang: resolved.lang, ...t, bodyEnd: (t.bodyEnd ?? '') + notes }), head, resolved, graph, detected, analysis };
 }

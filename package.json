@@ -1,6 +1,6 @@
 {
   "name": "u1webcore",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Astro SEO integration: meta tags, Open Graph images, JSON-LD schema, sitemaps, robots.txt, llms.txt (AEO/GEO for AI search), redirects, consent banner and an SEO audit CLI.",
   "keywords": [
     "astro",

@@ -340,25 +340,13 @@ a{color:inherit;text-decoration:underline;text-underline-offset:2px}
   }
   const start = (fn: () => void) => (d.readyState === 'loading' ? d.addEventListener('DOMContentLoaded', fn) : fn());
 
-  if (cfg.items) return start(() => run(cfg.items!));
-  if (!cfg.api || !cfg.key) return;
-  // Last answer first (no wait, no layout jump on the next page), then refresh it for the next page view.
-  const cached = get('cache');
-  if (cached && now - cached.at < 864e5) start(() => run(cached.items));
-  fetch(`${cfg.api}/public/v1/announcements`, { headers: { 'x-site-key': cfg.key } })
-    .then((r) => (r.ok ? r.json() : null))
-    .then((j) => {
-      if (!j) return;
-      put('cache', { at: Date.now(), items: j.items });
-      if (!cached) start(() => run(j.items));
-    })
-    .catch(() => {});
+  if (cfg.items?.length) start(() => run(cfg.items!));
 }
 
 const js = (v: unknown) => JSON.stringify(v).replace(/</g, '\\u003c');
 
-/** The <script> that shows the site's announcements. Empty without an API origin and site key. */
+/** The <script> that shows the site's announcements. Empty when none is on. */
 export function announceBody(cfg: AnnounceConfig | null | undefined): string {
-  if (!cfg || ((!cfg.api || !cfg.key) && !cfg.items)) return '';
+  if (!cfg?.items?.length) return '';
   return `<script>(${announceClient.toString()})(${js({ ...cfg, api: cfg.api?.replace(/\/+$/, '') })});</script>\n`;
 }

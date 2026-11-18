@@ -153,6 +153,8 @@ export type LlmsSection = { title: string; links: LlmsLink[] };
 
 export type SiteSettings = {
   $schema?: string;
+  /** Strips, popups and toasts, edited in the CMS (megaphone). Only the ones with status "on" are put in the pages. */
+  announcements?: import('../announce/types').SiteAnnouncement[];
   identity?: {
     name?: string;
     /** Shorter names / acronyms Google may use as the site name. */
@@ -241,8 +243,6 @@ export type SiteSettings = {
   /** dataLayer events for clicks, form submits and views. Runs for every page, before any tag. */
   tagManager?: { triggers?: TagTrigger[] };
   consent?: ConsentSettings;
-  /** Announcements from the uni1 dashboard (strip, popup, toast). On when the site has a site key; false turns them off. */
-  announcements?: { enabled?: boolean };
   legal?: { privacy?: string; terms?: string; cookies?: string; imprint?: string };
   hints?: { preconnect?: string[]; dnsPrefetch?: string[] };
   /** Site-wide custom JSON-LD nodes, added to every page's graph. */

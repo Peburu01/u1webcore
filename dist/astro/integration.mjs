@@ -26,6 +26,28 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 	value: mod,
 	enumerable: true
 }) : target, mod));
+// src/announce/types.ts
+/** The shape the page script shows. */
+const toAnnouncement = (a) => ({
+	id: a.id,
+	version: a.version ?? 1,
+	name: a.name,
+	kind: a.kind,
+	title: a.content.title ?? "",
+	body: a.content.body ?? "",
+	cta: a.content.cta ?? null,
+	image: a.content.image ?? null,
+	translations: a.translations ?? {},
+	appearance: a.appearance,
+	trigger: a.trigger,
+	pages: {
+		mode: a.pages.mode,
+		paths: a.pages.paths ?? []
+	},
+	frequency: a.frequency,
+	startsAt: a.startsAt ?? null,
+	endsAt: a.endsAt ?? null
+});
 // src/shared/util.ts
 const escapeHtml = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const escapeXml = (s) => escapeHtml(s).replace(/'/g, "&apos;");
@@ -36064,7 +36086,7 @@ function u1webcore(options = {}) {
 	let logger;
 	/** Locales from Astro's final `i18n` config (set by the site or an i18n integration such as wuchale). */
 	let astroLanguages;
-	let announce = null;
+	let stats = null;
 	/** The settings files, with the locales Astro routes by when the site settings name none. */
 	const settingsOf = (files) => {
 		const { site: own, pages } = readSettings(root, files);
@@ -36085,6 +36107,14 @@ function u1webcore(options = {}) {
 		if (cached && !dev) return cached;
 		const files = fileRoutes();
 		const { site, pages } = settingsOf(files);
+		const on = options.announcements === false ? [] : (site.announcements ?? []).filter((a) => a.status === "on").map(toAnnouncement);
+		const announce = on.length ? {
+			items: on,
+			...stats && {
+				api: stats.api,
+				key: stats.key
+			}
+		} : null;
 		return cached = {
 			site,
 			pages,
@@ -36134,8 +36164,7 @@ function u1webcore(options = {}) {
 				cached = null;
 				globalThis[LIVE] = { data };
 				const site = readSettings(root, []).site;
-				announce = await announceFrom(options, command === "dev" ? "development" : "production", root);
-				if (announce) l.info(`announcements on (${announce.api})`);
+				stats = await announceFrom(options, command === "dev" ? "development" : "production", root);
 				if (site.redirects?.length) {
 					const { rules, issues } = checkRedirects(site.redirects);
 					for (const i of issues) l.warn(`redirect ${i.from}: ${i.message}`);
