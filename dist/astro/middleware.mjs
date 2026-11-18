@@ -2442,7 +2442,7 @@ function announceClient(cfg) {
 	const d = document;
 	if (w.__u1a && !cfg.preview) return;
 	w.__u1a = 1;
-	if (!cfg.preview && w.self !== w.top) return;
+	if (!cfg.preview && !cfg.frames && w.self !== w.top) return;
 	const NS = "u1a:";
 	const now = Date.now();
 	const get = (k) => {

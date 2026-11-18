@@ -16,8 +16,8 @@ export function announceClient(cfg: AnnounceConfig): void {
   const d = document;
   if (w.__u1a && !cfg.preview) return;
   w.__u1a = 1;
-  // Not inside someone's frame (the CMS editor's preview), unless this is the dashboard's preview.
-  if (!cfg.preview && w.self !== w.top) return;
+  // Not inside someone else's frame. In dev (the CMS editor's preview is a frame) and the CMS panel's preview, yes.
+  if (!cfg.preview && !cfg.frames && w.self !== w.top) return;
 
   const NS = 'u1a:';
   const now = Date.now();

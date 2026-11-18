@@ -150,7 +150,7 @@ export default function u1webcore(options: U1webcoreOptions = {}) {
     const files = fileRoutes();
     const { site, pages } = settingsOf(files);
     const on = options.announcements === false ? [] : (site.announcements ?? []).filter((a) => a.status === 'on').map(toAnnouncement);
-    const announce = on.length ? { items: on, ...(stats && { api: stats.api, key: stats.key }) } : null;
+    const announce = on.length ? { items: on, ...(dev && { frames: true }), ...(stats && { api: stats.api, key: stats.key }) } : null;
     return (cached = {
       site,
       pages,

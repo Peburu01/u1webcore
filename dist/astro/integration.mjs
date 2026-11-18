@@ -36110,6 +36110,7 @@ function u1webcore(options = {}) {
 		const on = options.announcements === false ? [] : (site.announcements ?? []).filter((a) => a.status === "on").map(toAnnouncement);
 		const announce = on.length ? {
 			items: on,
+			...dev && { frames: true },
 			...stats && {
 				api: stats.api,
 				key: stats.key

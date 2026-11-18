@@ -88,6 +88,8 @@ export type AnnounceConfig = {
   key?: string;
   /** The announcements that are on, from the site's settings. */
   items?: Announcement[];
+  /** Show inside frames too (astro dev: the CMS editor's preview is a frame). */
+  frames?: boolean;
   /** Show them right away, ignoring dates and how often (the CMS preview). */
   preview?: boolean;
   lang?: string;
